@@ -1,7 +1,8 @@
 import math
 import random
-import numpy
+import numpy as np
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 
 def distance(A, B):
     sqSum = 0
@@ -38,10 +39,11 @@ def perturb(state):
     
     c = random.randint(0, len(state) - 1)
     d = 0.1
-    G = numpy.random.normal()
+    G = np.random.normal()
 
     #for i in range(0, len(state[c])):
-    state[c] = (state[c][0] + d*G, state[c][1] + d*G)   
+    #state[c] = (state[c][0] + d*G, state[c][1] + d*G)   
+    state[c] = [x + d*G for x in state[c]]
 
     return state
 
@@ -57,7 +59,7 @@ def test1():
     initial_state = [(2,6), (6,6), (9,3)]
     points = [(3,2), (3.5,2), (3.5, 2.5), (4,3), (7,4), (7.5,3.5), (8,5), (1.5,5)]
 
-    final_state = SimulatedAnnealing(340, 50, 0.5, 0.05, initial_state, points)
+    final_state = SimulatedAnnealing(340, 100, 0.95, 0.0001, initial_state, points)
 
     cp = AssignCluster(points, final_state)
     print(cp)
@@ -77,4 +79,29 @@ def test1():
         else:
             plt.plot(points[i][0], points[i][1], 'ro')
     plt.show()
-test1()
+
+def test2():
+    #initial_state = [(2,6), (6,6), (9,3)]
+    initial_state = [(2,6,2)]
+    points = [(3,2, 0), (3.5,2, 1), (3.5, 2.5, 2), (4,3, 5), (7,4, 3), (7.5,3.5, 7), (8,5, 1), (1.5,5,0)]
+    
+    final_state = SimulatedAnnealing(40, 100, 0.95, 0.0001, initial_state, points)
+    cp = AssignCluster(points, final_state)
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    
+    ax.scatter(final_state[0][0], final_state[0][1], final_state[0][2], c='blue', marker='*')
+    ax.scatter(initial_state[0][0], initial_state[0][1], initial_state[0][2], c='red', marker='x')
+
+    for i in range(0, len(points)):
+        ax.scatter(points[i][0], points[i][1], points[i][2], c='green')
+    ax.set_xlabel('X Label')
+    ax.set_ylabel('Y Label')
+    ax.set_zlabel('Z Label')
+    plt.show()
+
+
+
+#test1()
+test2()
